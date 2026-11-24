@@ -1,0 +1,23 @@
+# Rust build artifacts
+/target
+**/*.rs.bk
+*.pdb
+
+# Local binaries & release staging
+*.exe
+*.zip
+SHA256SUMS.txt
+
+# OS & editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Local debug / crash logs
+crash.log
+*.log
