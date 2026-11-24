@@ -48,7 +48,7 @@ Windows Settings only lets you *remove* a language or keyboard layout entirely. 
    - `togglelang-vX.Y.Z-x86_64-windows.zip` — portable archive containing `togglelang.exe`, `README.md`, and `LICENSE`.
 3. *(Optional)* Verify the download against `SHA256SUMS.txt` in PowerShell:
    ```powershell
-   Get-FileHash .\togglelang-v0.1.0-x86_64-windows.exe -Algorithm SHA256
+   Get-FileHash .\togglelang-vX.Y.Z-x86_64-windows.exe -Algorithm SHA256
    ```
 4. Place `togglelang.exe` in any folder you like (for example `C:\Tools\ToggleLang\`) and launch it.
 
