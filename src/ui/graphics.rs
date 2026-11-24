@@ -71,8 +71,17 @@ impl DibSurface {
         let mut bits: *mut core::ffi::c_void = std::ptr::null_mut();
         // SAFETY: `screen_dc` and `bmi` are valid; `bitmap` is wrapped immediately in `BitmapGuard`.
         let bitmap = BitmapGuard::new(
-            unsafe { CreateDIBSection(screen_dc.raw(), &bmi, DIB_RGB_COLORS, &mut bits, None, 0) }
-                .map_err(|e| AppError::Backend(format!("CreateDIBSection(flyout) failed: {e}")))?,
+            unsafe {
+                CreateDIBSection(
+                    Some(screen_dc.raw()),
+                    &bmi,
+                    DIB_RGB_COLORS,
+                    &mut bits,
+                    None,
+                    0,
+                )
+            }
+            .map_err(|e| AppError::Backend(format!("CreateDIBSection(flyout) failed: {e}")))?,
         );
 
         if bits.is_null() {
@@ -82,7 +91,7 @@ impl DibSurface {
         }
 
         // SAFETY: Both `mem_dc` and `bitmap` are valid; ownership moves into `Self` after selection.
-        let old_obj = unsafe { SelectObject(mem_dc.raw(), bitmap.raw()) };
+        let old_obj = unsafe { SelectObject(mem_dc.raw(), bitmap.raw().into()) };
         Ok(Self {
             mem_dc: mem_dc.into_raw(),
             bitmap: bitmap.into_raw(),
@@ -114,7 +123,7 @@ impl Drop for DibSurface {
                 let _ = DeleteDC(self.mem_dc);
             }
             if !self.bitmap.is_invalid() {
-                let _ = DeleteObject(self.bitmap);
+                let _ = DeleteObject(self.bitmap.into());
             }
         }
     }
@@ -140,8 +149,17 @@ pub fn bgra_pixels_to_hicon(pixels: &[u8], size: u32) -> AppResult<HICON> {
     let mut bits: *mut core::ffi::c_void = std::ptr::null_mut();
     // SAFETY: `screen_dc` and `bmi` are valid; `color_bmp` is freed via `BitmapGuard` on drop.
     let color_bmp = BitmapGuard::new(
-        unsafe { CreateDIBSection(screen_dc.raw(), &bmi, DIB_RGB_COLORS, &mut bits, None, 0) }
-            .map_err(|e| AppError::Backend(format!("CreateDIBSection(icon) failed: {e}")))?,
+        unsafe {
+            CreateDIBSection(
+                Some(screen_dc.raw()),
+                &bmi,
+                DIB_RGB_COLORS,
+                &mut bits,
+                None,
+                0,
+            )
+        }
+        .map_err(|e| AppError::Backend(format!("CreateDIBSection(icon) failed: {e}")))?,
     );
 
     if bits.is_null() {

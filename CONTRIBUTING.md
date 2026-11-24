@@ -20,7 +20,7 @@ Please note that this project follows a [Code of Conduct](CODE_OF_CONDUCT.md). B
 
 - **Windows 11** (x86_64)
 - **Rust 1.88+** (Edition 2024) — install via [rustup](https://rustup.rs/)
-- Either the `x86_64-pc-windows-msvc` (Visual Studio C++ Build Tools) or `x86_64-pc-windows-gnu` toolchain
+- `x86_64-pc-windows-msvc` (recommended, Visual Studio C++ Build Tools) or `x86_64-pc-windows-gnu` with full MinGW-w64 binutils (`dlltool` + `as` on `PATH`, e.g. via MSYS2 or WinLibs — required by `windows` 0.62 `raw-dylib` linking)
 
 ### Building & Running Locally
 

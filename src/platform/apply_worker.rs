@@ -44,7 +44,7 @@ impl ApplyWorker {
                 let hwnd = HWND(raw_hwnd as *mut core::ffi::c_void);
                 // SAFETY: `PostMessageW` is thread-safe and ignored harmlessly if the window closed.
                 unsafe {
-                    let _ = PostMessageW(hwnd, WM_APPLY_COMPLETE, WPARAM(0), LPARAM(0));
+                    let _ = PostMessageW(Some(hwnd), WM_APPLY_COMPLETE, WPARAM(0), LPARAM(0));
                 }
             },
         )

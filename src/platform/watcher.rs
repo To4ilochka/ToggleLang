@@ -77,7 +77,7 @@ impl RegistryWatcher {
         };
         let filter = REG_NOTIFY_CHANGE_NAME | REG_NOTIFY_CHANGE_LAST_SET;
         // SAFETY: `key` and `ev` live as long as `self`.
-        let err = unsafe { RegNotifyChangeKeyValue(key.raw(), subtree, filter, ev, true) };
+        let err = unsafe { RegNotifyChangeKeyValue(key.raw(), subtree, filter, Some(ev), true) };
         if err == ERROR_SUCCESS {
             Ok(())
         } else {

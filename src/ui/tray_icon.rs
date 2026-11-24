@@ -1,6 +1,5 @@
-use windows::Foundation::Numerics::Matrix3x2;
 use windows::Win32::Graphics::Direct2D::Common::{
-    D2D_POINT_2F, D2D_RECT_F, D2D1_ALPHA_MODE_PREMULTIPLIED, D2D1_COLOR_F, D2D1_PIXEL_FORMAT,
+    D2D_RECT_F, D2D1_ALPHA_MODE_PREMULTIPLIED, D2D1_COLOR_F, D2D1_PIXEL_FORMAT,
 };
 use windows::Win32::Graphics::Direct2D::{
     D2D1_COMBINE_MODE_EXCLUDE, D2D1_DRAW_TEXT_OPTIONS_NONE, D2D1_ELLIPSE,
@@ -16,6 +15,7 @@ use windows::Win32::Graphics::Imaging::{GUID_WICPixelFormat32bppPBGRA, WICBitmap
 use windows::Win32::UI::HiDpi::GetSystemMetricsForDpi;
 use windows::Win32::UI::WindowsAndMessaging::{HICON, SM_CXSMICON};
 use windows::core::PCWSTR;
+use windows_numerics::{Matrix3x2, Vector2};
 
 use crate::core::error::{AppError, AppResult};
 use crate::core::model::TrayIconMode;
@@ -149,9 +149,9 @@ impl TrayIconRenderer {
                 radiusY: 2.75 * s,
             };
             let top_knob = D2D1_ELLIPSE {
-                point: D2D_POINT_2F {
-                    x: 12.5 * s,
-                    y: 4.25 * s,
+                point: Vector2 {
+                    X: 12.5 * s,
+                    Y: 4.25 * s,
                 },
                 radiusX: 1.45 * s,
                 radiusY: 1.45 * s,
@@ -198,9 +198,9 @@ impl TrayIconRenderer {
             target.DrawRoundedRectangle(&bot_rr, &brush, stroke, None);
 
             let bot_knob = D2D1_ELLIPSE {
-                point: D2D_POINT_2F {
-                    x: 3.6 * s,
-                    y: 11.75 * s,
+                point: Vector2 {
+                    X: 3.6 * s,
+                    Y: 11.75 * s,
                 },
                 radiusX: 1.35 * s,
                 radiusY: 1.35 * s,

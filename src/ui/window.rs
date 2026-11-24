@@ -55,7 +55,7 @@ impl WindowGuard {
                 260,
                 None,
                 None,
-                hinstance,
+                Some(hinstance.into()),
                 None,
             )
             .map_err(|e| AppError::Backend(format!("CreateWindowExW failed: {e}")))?;

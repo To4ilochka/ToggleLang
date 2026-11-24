@@ -1,7 +1,6 @@
-use windows::Foundation::Numerics::Matrix3x2;
 use windows::Win32::Foundation::{HWND, RECT};
 use windows::Win32::Graphics::Direct2D::Common::{
-    D2D_POINT_2F, D2D1_ALPHA_MODE_PREMULTIPLIED, D2D1_PIXEL_FORMAT,
+    D2D1_ALPHA_MODE_PREMULTIPLIED, D2D1_PIXEL_FORMAT,
 };
 use windows::Win32::Graphics::Direct2D::{
     D2D1_ANTIALIAS_MODE_PER_PRIMITIVE, D2D1_DRAW_TEXT_OPTIONS_CLIP, D2D1_RENDER_TARGET_PROPERTIES,
@@ -19,6 +18,7 @@ use windows::Win32::Graphics::DirectWrite::{
 use windows::Win32::Graphics::Dxgi::Common::DXGI_FORMAT_B8G8R8A8_UNORM;
 use windows::Win32::Graphics::Gdi::{BitBlt, HDC, SRCCOPY};
 use windows::core::PCWSTR;
+use windows_numerics::{Matrix3x2, Vector2};
 
 use crate::core::error::{AppError, AppResult};
 use crate::platform::win_util::{ScreenDcGuard, to_wide_null};
@@ -220,7 +220,7 @@ impl FlyoutRenderer {
                 0,
                 self.surface.width_px() as i32,
                 self.surface.height_px() as i32,
-                self.surface.mem_dc(),
+                Some(self.surface.mem_dc()),
                 0,
                 0,
                 SRCCOPY,
@@ -459,13 +459,13 @@ impl FlyoutRenderer {
             self.brush
                 .SetColor(&to_d2d_color(p.divider.scale_alpha(alpha)));
             self.target.DrawLine(
-                D2D_POINT_2F {
-                    x: 0.0,
-                    y: view.geometry.divider_y + 0.5,
+                Vector2 {
+                    X: 0.0,
+                    Y: view.geometry.divider_y + 0.5,
                 },
-                D2D_POINT_2F {
-                    x: view.geometry.width,
-                    y: view.geometry.divider_y + 0.5,
+                Vector2 {
+                    X: view.geometry.width,
+                    Y: view.geometry.divider_y + 0.5,
                 },
                 &self.brush,
                 1.0,

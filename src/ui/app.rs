@@ -152,7 +152,7 @@ pub fn run_tray_app(manager: SystemLayoutManager, show_immediately: bool) -> App
     // SAFETY: Storing owned pointer in `GWLP_USERDATA`; reclaimed cleanly after message loop exits.
     unsafe {
         SetWindowLongPtrW(hwnd, GWLP_USERDATA, app_ptr as isize);
-        let _ = SetTimer(hwnd, TIMER_ACTIVE_POLL, ACTIVE_POLL_MS, None);
+        let _ = SetTimer(Some(hwnd), TIMER_ACTIVE_POLL, ACTIVE_POLL_MS, None);
     }
 
     if show_immediately {
@@ -167,9 +167,9 @@ pub fn run_tray_app(manager: SystemLayoutManager, show_immediately: bool) -> App
 
     // SAFETY: Detach `GWLP_USERDATA` before destroying the window and dropping `FlyoutApp`.
     unsafe {
-        let _ = KillTimer(hwnd, TIMER_ACTIVE_POLL);
-        let _ = KillTimer(hwnd, TIMER_REG_DEBOUNCE);
-        let _ = KillTimer(hwnd, TIMER_NOTICE_EXPIRE);
+        let _ = KillTimer(Some(hwnd), TIMER_ACTIVE_POLL);
+        let _ = KillTimer(Some(hwnd), TIMER_REG_DEBOUNCE);
+        let _ = KillTimer(Some(hwnd), TIMER_NOTICE_EXPIRE);
         SetWindowLongPtrW(hwnd, GWLP_USERDATA, 0);
         drop(window);
         drop(Box::from_raw(app_ptr));
@@ -228,7 +228,7 @@ fn run_message_loop(
                         .suppress_reg_until
                         .is_some_and(|until| Instant::now() < until);
                     if !suppressed {
-                        let _ = SetTimer(hwnd, TIMER_REG_DEBOUNCE, REG_DEBOUNCE_MS, None);
+                        let _ = SetTimer(Some(hwnd), TIMER_REG_DEBOUNCE, REG_DEBOUNCE_MS, None);
                     }
                 }
             }
@@ -264,7 +264,7 @@ impl FlyoutApp {
         unsafe {
             let _ = SetWindowPos(
                 self.hwnd,
-                HWND_TOPMOST,
+                Some(HWND_TOPMOST),
                 x,
                 y,
                 w_px as i32,
@@ -340,7 +340,7 @@ impl FlyoutApp {
                 let new_top = cur_rect.bottom - h_px as i32;
                 let _ = SetWindowPos(
                     self.hwnd,
-                    HWND_TOPMOST,
+                    Some(HWND_TOPMOST),
                     cur_rect.left,
                     new_top,
                     w_px as i32,
@@ -350,7 +350,7 @@ impl FlyoutApp {
             } else {
                 let _ = SetWindowPos(
                     self.hwnd,
-                    HWND_TOPMOST,
+                    Some(HWND_TOPMOST),
                     0,
                     0,
                     w_px as i32,
@@ -547,7 +547,12 @@ impl FlyoutApp {
         self.status_notice = Some(text.into());
         // SAFETY: Arming a one-shot timer on our owned window to clear the notice automatically.
         unsafe {
-            let _ = SetTimer(self.hwnd, TIMER_NOTICE_EXPIRE, NOTICE_DURATION_MS, None);
+            let _ = SetTimer(
+                Some(self.hwnd),
+                TIMER_NOTICE_EXPIRE,
+                NOTICE_DURATION_MS,
+                None,
+            );
         }
         if self.visible {
             self.render_now();
@@ -557,7 +562,7 @@ impl FlyoutApp {
     fn clear_notice(&mut self) {
         if self.status_notice.take().is_some() {
             unsafe {
-                let _ = KillTimer(self.hwnd, TIMER_NOTICE_EXPIRE);
+                let _ = KillTimer(Some(self.hwnd), TIMER_NOTICE_EXPIRE);
             }
         }
     }
@@ -605,7 +610,7 @@ impl FlyoutApp {
 
     fn on_registry_sync_debounced(&mut self) {
         unsafe {
-            let _ = KillTimer(self.hwnd, TIMER_REG_DEBOUNCE);
+            let _ = KillTimer(Some(self.hwnd), TIMER_REG_DEBOUNCE);
         }
         if self
             .suppress_reg_until
@@ -859,7 +864,7 @@ unsafe extern "system" fn wnd_proc(
             };
             unsafe {
                 if let Ok(cur) = LoadCursorW(None, cursor_id) {
-                    SetCursor(cur);
+                    SetCursor(Some(cur));
                 }
             }
             LRESULT(1)
