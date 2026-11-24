@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-11-24
+
+### Changed
+- Upgraded Windows bindings from `windows 0.58` to `windows 0.62.2` and `windows-numerics 0.3` with stricter `Option`-typed Win32 handles and Direct2D numeric types.
+- Updated GitHub Actions workflows to `actions/checkout@v7`.
+- Documented `windows 0.62` `raw-dylib` toolchain requirements for `x86_64-pc-windows-gnu` in `CONTRIBUTING.md`.
+
 ## [0.1.0] - 2026-11-24
 
 ### Added
@@ -19,5 +26,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Atomic state persistence (`%LOCALAPPDATA%\ToggleLang\state.json`) and auto-generated emergency recovery script (`restore-all.ps1`).
 - Full CLI (`list`, `disable`, `enable`, `toggle`, `activate`, `restore`, `enforce`, `inspect`, `watch`).
 
-[Unreleased]: https://github.com/To4ilochka/ToggleLang/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/To4ilochka/ToggleLang/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/To4ilochka/ToggleLang/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/To4ilochka/ToggleLang/releases/tag/v0.1.0
