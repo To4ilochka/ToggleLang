@@ -1,4 +1,4 @@
-use windows::Win32::Foundation::{BOOL, HWND};
+use windows::Win32::Foundation::HWND;
 use windows::Win32::Graphics::Dwm::{
     DWM_SYSTEMBACKDROP_TYPE, DWMSBT_MAINWINDOW, DWMSBT_TRANSIENTWINDOW, DWMWA_SYSTEMBACKDROP_TYPE,
     DWMWA_USE_IMMERSIVE_DARK_MODE, DWMWA_WINDOW_CORNER_PREFERENCE, DWMWCP_ROUND,
@@ -7,7 +7,7 @@ use windows::Win32::Graphics::Dwm::{
 use windows::Win32::System::LibraryLoader::GetProcAddress;
 use windows::Win32::System::Registry::{HKEY_CURRENT_USER, KEY_READ};
 use windows::Win32::UI::Controls::MARGINS;
-use windows::core::PCSTR;
+use windows::core::{BOOL, PCSTR};
 
 use crate::platform::registry::RegKey;
 use crate::platform::win_util::LibraryGuard;

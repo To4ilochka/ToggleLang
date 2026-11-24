@@ -60,16 +60,15 @@ impl Drop for LibraryGuard {
 
 /// RAII wrapper for a window/screen device context acquired via `GetDC`.
 pub struct ScreenDcGuard {
-    hwnd: HWND,
+    hwnd: Option<HWND>,
     hdc: HDC,
 }
 
 impl ScreenDcGuard {
     pub fn acquire(hwnd: Option<HWND>) -> Option<Self> {
-        let target = hwnd.unwrap_or_default();
         // SAFETY: Acquiring a device context paired with `ReleaseDC` in `Drop`.
-        let hdc = unsafe { GetDC(target) };
-        (!hdc.is_invalid()).then_some(Self { hwnd: target, hdc })
+        let hdc = unsafe { GetDC(hwnd) };
+        (!hdc.is_invalid()).then_some(Self { hwnd, hdc })
     }
 
     pub fn raw(&self) -> HDC {
@@ -94,7 +93,7 @@ pub struct CompatibleDcGuard(HDC);
 impl CompatibleDcGuard {
     pub fn create(reference_dc: HDC) -> Option<Self> {
         // SAFETY: Creating a memory DC compatible with `reference_dc`; deleted in `Drop`.
-        let mem_dc = unsafe { CreateCompatibleDC(reference_dc) };
+        let mem_dc = unsafe { CreateCompatibleDC(Some(reference_dc)) };
         (!mem_dc.is_invalid()).then_some(Self(mem_dc))
     }
 
@@ -144,7 +143,7 @@ impl Drop for BitmapGuard {
         if !self.0.is_invalid() {
             // SAFETY: `self.0` is an owned GDI bitmap not currently selected into any DC.
             unsafe {
-                let _ = DeleteObject(self.0);
+                let _ = DeleteObject(self.0.into());
             }
         }
     }

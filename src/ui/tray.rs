@@ -284,7 +284,7 @@ impl TrayController {
                 self.hwnd,
                 None,
             );
-            let _ = PostMessageW(self.hwnd, WM_NULL, WPARAM(0), LPARAM(0));
+            let _ = PostMessageW(Some(self.hwnd), WM_NULL, WPARAM(0), LPARAM(0));
             let _ = DestroyMenu(menu);
 
             TrayMenuAction::from_id(cmd.0 as u32)

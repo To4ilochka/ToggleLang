@@ -1,9 +1,10 @@
-use windows::Win32::Foundation::{BOOL, HWND, LPARAM, WPARAM};
+use windows::Win32::Foundation::{HWND, LPARAM, WPARAM};
 use windows::Win32::UI::Input::KeyboardAndMouse::GetKeyboardLayout;
 use windows::Win32::UI::WindowsAndMessaging::{
     EnumChildWindows, GetClassNameW, GetForegroundWindow, GetWindowThreadProcessId, PostMessageW,
     SetForegroundWindow, WM_INPUTLANGCHANGEREQUEST,
 };
+use windows::core::BOOL;
 
 use crate::platform::win_util::wide_nul_to_string;
 
@@ -55,7 +56,7 @@ pub fn notify_window_layout_change(prev_foreground: Option<HWND>, hkl: Option<is
         if let Some(hkl_val) = hkl {
             let target = find_uwp_core_window(hwnd).unwrap_or(hwnd);
             let _ = PostMessageW(
-                target,
+                Some(target),
                 WM_INPUTLANGCHANGEREQUEST,
                 WPARAM(0),
                 LPARAM(hkl_val),
@@ -88,7 +89,11 @@ fn find_uwp_core_window(parent: HWND) -> Option<HWND> {
     };
     // SAFETY: `state` lives until `EnumChildWindows` returns.
     unsafe {
-        let _ = EnumChildWindows(parent, Some(enum_proc), LPARAM((&raw mut state) as isize));
+        let _ = EnumChildWindows(
+            Some(parent),
+            Some(enum_proc),
+            LPARAM((&raw mut state) as isize),
+        );
     }
     (!state.found.0.is_null()).then_some(state.found)
 }

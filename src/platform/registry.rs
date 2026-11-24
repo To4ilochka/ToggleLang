@@ -29,7 +29,7 @@ impl RegKey {
         let wide = to_wide_null(subkey);
         let mut hkey = HKEY::default();
         // SAFETY: `wide` is NUL-terminated UTF-16; `hkey` is initialized by `RegOpenKeyExW` on success.
-        let err = unsafe { RegOpenKeyExW(root, PCWSTR(wide.as_ptr()), 0, access, &mut hkey) };
+        let err = unsafe { RegOpenKeyExW(root, PCWSTR(wide.as_ptr()), None, access, &mut hkey) };
         if err == ERROR_SUCCESS {
             Ok(Self(hkey))
         } else {
@@ -74,8 +74,15 @@ impl RegKey {
         let wide_val = to_wide_null(value);
         let bytes = wide_as_bytes(&wide_val);
         // SAFETY: `wide_name` and `wide_val` are NUL-terminated UTF-16 buffers valid for the call.
-        let err =
-            unsafe { RegSetValueExW(self.0, PCWSTR(wide_name.as_ptr()), 0, REG_SZ, Some(bytes)) };
+        let err = unsafe {
+            RegSetValueExW(
+                self.0,
+                PCWSTR(wide_name.as_ptr()),
+                None,
+                REG_SZ,
+                Some(bytes),
+            )
+        };
         if err == ERROR_SUCCESS {
             Ok(())
         } else {
@@ -109,10 +116,10 @@ impl RegKey {
                 RegEnumKeyExW(
                     self.0,
                     index,
-                    PWSTR(name_buf.as_mut_ptr()),
+                    Some(PWSTR(name_buf.as_mut_ptr())),
                     &mut name_len,
                     None,
-                    PWSTR::null(),
+                    None,
                     None,
                     None,
                 )
@@ -144,7 +151,7 @@ impl RegKey {
                 RegEnumValueW(
                     self.0,
                     index,
-                    PWSTR(name_buf.as_mut_ptr()),
+                    Some(PWSTR(name_buf.as_mut_ptr())),
                     &mut name_len,
                     None,
                     Some(&mut vtype.0),
@@ -161,7 +168,7 @@ impl RegKey {
                         RegEnumValueW(
                             self.0,
                             index,
-                            PWSTR(name_buf.as_mut_ptr()),
+                            Some(PWSTR(name_buf.as_mut_ptr())),
                             &mut name_len,
                             None,
                             Some(&mut vtype.0),

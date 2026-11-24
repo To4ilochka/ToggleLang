@@ -36,7 +36,7 @@ impl SingleInstanceGuard {
             if wake_message != 0 {
                 // SAFETY: Broadcasting a registered window message to wake the existing flyout.
                 unsafe {
-                    let _ = PostMessageW(HWND_BROADCAST, wake_message, WPARAM(0), LPARAM(0));
+                    let _ = PostMessageW(Some(HWND_BROADCAST), wake_message, WPARAM(0), LPARAM(0));
                 }
             }
             return Ok(None);
